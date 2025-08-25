@@ -2,12 +2,7 @@
 using CashFlowLite.Application.Repositories;
 using CashFlowLite.Domain.Entities;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CashFlowLite.Application.Services
 {
@@ -25,11 +20,12 @@ namespace CashFlowLite.Application.Services
             var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
             if (existingUser != null) return false;
 
-            // Password hashing
-            byte[] salt = new byte[128 / 8];
+            // Generate salt
+            byte[] salt = new byte[16];
             using (var rng = RandomNumberGenerator.Create())
                 rng.GetBytes(salt);
 
+            // Password hashing
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: dto.Password,
                 salt: salt,
@@ -40,28 +36,31 @@ namespace CashFlowLite.Application.Services
             var user = new User
             {
                 Email = dto.Email,
-                PasswordHash = hashed
+                PasswordHash = hashed,
+                PasswordSalt = salt,
+                CreatedAt = DateTime.UtcNow
             };
 
             await _userRepository.AddAsync(user);
             return true;
         }
 
-        public async Task<string?> LoginAsync(LoginDto dto)
+        public async Task<AuthResponseDto?> LoginAsync(LoginDto dto)
         {
             var user = await _userRepository.GetByEmailAsync(dto.Email);
             if (user == null) return null;
 
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: dto.Password,
-                salt: new byte[16], // demo salt
+                salt: user.PasswordSalt, // demo salt
                 prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 10000,
                 numBytesRequested: 256 / 8));
 
             if (hashed != user.PasswordHash) return null;
 
-            return "demo-jwt-token";
+            string token = "demo-jwt-token";
+            return new AuthResponseDto { Token = token };
         }
     }
 }
