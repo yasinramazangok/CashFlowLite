@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CashFlowLite.Domain\CashFlowLite.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
