@@ -20,8 +20,9 @@ namespace CashFlowLite.API.Controllers
         public async Task<IActionResult> GetAccountByUserId(int userId)
         {
             var account = await _accountService.GetAccountByUserIdAsync(userId);
-            if (account == null) return NotFound();
-            return Ok(account);
+            return account == null
+                ? NotFound($"'{userId}' numaralı ID'ye sahip kullanıcı ve hesabı bulunamadı!")
+                : Ok(account);
         }
 
         // POST api/accounts/{accountId}/deposit

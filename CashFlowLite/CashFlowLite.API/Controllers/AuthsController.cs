@@ -28,7 +28,7 @@ namespace CashFlowLite.API.Controllers
         public async Task<IActionResult> Login(LoginDto dto)
         {
             var token = await _authService.LoginAsync(dto);
-            if (token == null) return Unauthorized();
+            if (token == null) return Unauthorized("Giriş yapılamadı! Kullanıcı adı veya şifre yanlış!");
             return Ok(new { Token = token });
         }
     }

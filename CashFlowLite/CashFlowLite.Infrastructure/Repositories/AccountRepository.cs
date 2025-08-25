@@ -49,7 +49,10 @@ namespace CashFlowLite.Infrastructure.Repositories
 
         public async Task<Account> GetAccountByUserIdAsync(int userId)
         {
-            return await _context.Accounts.Include(a => a.Transactions).FirstAsync(a => a.UserId == userId);
+            var account = await _context.Accounts
+                                        .Include(a => a.Transactions)
+                                        .FirstOrDefaultAsync(a => a.UserId == userId);
+            return account;
         }
     }
 }
