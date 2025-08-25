@@ -4,7 +4,7 @@ namespace CashFlowLite.Application.Services
 {
     public interface IAuthService
     {
-        Task<bool> RegisterAsync(RegisterDto dto);
+        Task<int> RegisterAsync(RegisterDto dto);
         Task<AuthResponseDto?> LoginAsync(LoginDto dto);
     }
 }

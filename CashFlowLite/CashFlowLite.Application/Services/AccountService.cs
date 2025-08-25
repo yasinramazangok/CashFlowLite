@@ -1,10 +1,7 @@
 ﻿using CashFlowLite.Application.DTOs;
 using CashFlowLite.Application.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CashFlowLite.Domain.Entities;
+using System.Security.Principal;
 
 namespace CashFlowLite.Application.Services
 {
@@ -17,10 +14,10 @@ namespace CashFlowLite.Application.Services
             _accountRepository = accountRepository;
         }
 
-        public async Task<AccountDto> GetAccountAsync(int userId)
+        public async Task<AccountDto> GetAccountByUserIdAsync(int userId)
         {
-            var accounts = await _accountRepository.GetAllAsync();
-            var account = accounts.FirstOrDefault(a => a.UserId == userId);
+            var account = await _accountRepository.GetAccountByUserIdAsync(userId);
+            if (account == null) return null;
             return new AccountDto
             {
                 Id = account!.Id,
@@ -40,10 +37,23 @@ namespace CashFlowLite.Application.Services
         public async Task<bool> WithdrawAsync(int accountId, decimal amount)
         {
             var account = await _accountRepository.GetByIdAsync(accountId);
-            if (account == null || account.Balance < amount) return false;
+            if (account == null || account.Balance < amount || account.Balance < 0) return false;
             account.Balance -= amount;
             await _accountRepository.UpdateAsync(account);
             return true;
+        }
+
+        public async Task<int> CreateAccountAsync(int userId)
+        {
+            var account = new Account 
+            { 
+                UserId = userId, 
+                Balance = 0, 
+                CreatedAt = DateTime.UtcNow 
+            };
+            
+            await _accountRepository.AddAsync(account);
+            return account.Id;
         }
     }
 }

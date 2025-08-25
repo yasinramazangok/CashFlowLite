@@ -9,7 +9,8 @@ namespace CashFlowLite.Application.Repositories
 {
     public interface IAccountRepository
     {
-        Task<Account> GetByIdAsync(int id);
+        Task<Account> GetByIdAsync(int accountId);
+        Task<Account> GetAccountByUserIdAsync(int userId);
         Task<IEnumerable<Account>> GetAllAsync();
         Task AddAsync(Account account);
         Task UpdateAsync(Account account);

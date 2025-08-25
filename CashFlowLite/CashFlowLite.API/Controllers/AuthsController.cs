@@ -9,26 +9,27 @@ namespace CashFlowLite.API.Controllers
     public class AuthsController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IOnboardingService _onboardingService;
 
-        public AuthsController(IAuthService authService)
+        public AuthsController(IAuthService authService, IOnboardingService onboardingService)
         {
             _authService = authService;
+            _onboardingService = onboardingService;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+        public async Task<IActionResult> Register(RegisterDto dto)
         {
-            bool result = await _authService.RegisterAsync(dto);
-            if (!result) return BadRequest("Bu email zaten kayıtlı!");
-            return Ok("Kullanıcı kaydı başarılı!");
+            var userId = await _onboardingService.RegisterAndCreateAccountAsync(dto);
+            return Ok($"Kullanıcı {userId} numaralı ID ile oluşturuldu!");
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        public async Task<IActionResult> Login(LoginDto dto)
         {
-            var authResult = await _authService.LoginAsync(dto);
-            if (authResult == null) return Unauthorized("Kimlik doğrulama hatası!");
-            return Ok(authResult);
+            var token = await _authService.LoginAsync(dto);
+            if (token == null) return Unauthorized();
+            return Ok(new { Token = token });
         }
     }
 }

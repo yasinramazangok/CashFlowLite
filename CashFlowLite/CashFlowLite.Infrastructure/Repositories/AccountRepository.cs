@@ -19,8 +19,8 @@ namespace CashFlowLite.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Account> GetByIdAsync(int id) =>
-            await _context.Accounts.Include(a => a.Transactions).FirstOrDefaultAsync(a => a.Id == id);
+        public async Task<Account> GetByIdAsync(int accountId) =>
+            await _context.Accounts.Include(a => a.Transactions).FirstOrDefaultAsync(a => a.Id == accountId);
 
         public async Task<IEnumerable<Account>> GetAllAsync() =>
             await _context.Accounts.ToListAsync();
@@ -45,6 +45,11 @@ namespace CashFlowLite.Infrastructure.Repositories
                 _context.Accounts.Remove(account);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<Account> GetAccountByUserIdAsync(int userId)
+        {
+            return await _context.Accounts.Include(a => a.Transactions).FirstAsync(a => a.UserId == userId);
         }
     }
 }

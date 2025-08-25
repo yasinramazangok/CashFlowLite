@@ -15,10 +15,10 @@ namespace CashFlowLite.Application.Services
             _userRepository = userRepository;
         }
 
-        public async Task<bool> RegisterAsync(RegisterDto dto)
+        public async Task<int> RegisterAsync(RegisterDto dto)
         {
             var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
-            if (existingUser != null) return false;
+            if (existingUser != null) return -1;
 
             // Generate salt
             byte[] salt = new byte[16];
@@ -42,7 +42,7 @@ namespace CashFlowLite.Application.Services
             };
 
             await _userRepository.AddAsync(user);
-            return true;
+            return user.Id;
         }
 
         public async Task<AuthResponseDto?> LoginAsync(LoginDto dto)
