@@ -2,11 +2,6 @@
 using CashFlowLite.Domain.Entities;
 using CashFlowLite.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CashFlowLite.Infrastructure.Repositories
 {
@@ -47,12 +42,7 @@ namespace CashFlowLite.Infrastructure.Repositories
             }
         }
 
-        public async Task<Account> GetAccountByUserIdAsync(int userId)
-        {
-            var account = await _context.Accounts
-                                        .Include(a => a.Transactions)
-                                        .FirstOrDefaultAsync(a => a.UserId == userId);
-            return account;
-        }
+        public async Task<Account> GetAccountByUserIdAsync(int userId) =>
+            await _context.Accounts.Include(a => a.Transactions).FirstOrDefaultAsync(a => a.UserId == userId);
     }
 }

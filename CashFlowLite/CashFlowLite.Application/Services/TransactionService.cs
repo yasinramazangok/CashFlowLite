@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace CashFlowLite.Application.Services
 {
@@ -19,9 +20,9 @@ namespace CashFlowLite.Application.Services
             _transactionRepository = transactionRepository;
         }
 
-        public async Task<Transaction> LogTransactionAsync(int accountId, decimal amount, TransactionType type)
+        public async Task<Domain.Entities.Transaction> LogTransactionAsync(int accountId, decimal amount, TransactionType type)
         {
-            var transaction = new Transaction
+            var transaction = new Domain.Entities.Transaction
             {
                 AccountId = accountId,
                 Amount = amount,
@@ -45,6 +46,22 @@ namespace CashFlowLite.Application.Services
                 Type = t.Type,
                 CreatedAt = t.CreatedAt
             });
+        }
+
+        public async Task<TransactionDto> GetByIdAsync(int id)
+        {
+            var transaction = await _transactionRepository.GetByIdAsync(id);
+
+            if (transaction == null) return null;
+
+            return new TransactionDto
+            {
+                Id = transaction.Id,
+                AccountId = transaction.AccountId,
+                Amount = transaction.Amount,
+                Type = transaction.Type,
+                CreatedAt = transaction.CreatedAt
+            };
         }
     }
 }

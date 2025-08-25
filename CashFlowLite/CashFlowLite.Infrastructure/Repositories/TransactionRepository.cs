@@ -32,15 +32,5 @@ namespace CashFlowLite.Infrastructure.Repositories
             await _context.Transactions.AddAsync(transaction);
             await _context.SaveChangesAsync();
         }
-
-        public async Task DeleteAsync(int id)
-        {
-            var transaction = await _context.Transactions.FindAsync(id);
-            if (transaction != null)
-            {
-                _context.Transactions.Remove(transaction);
-                await _context.SaveChangesAsync();
-            }
-        }
     }
 }
