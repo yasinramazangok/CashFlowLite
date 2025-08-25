@@ -4,6 +4,7 @@ using CashFlowLite.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CashFlowLite.Infrastructure.Migrations
 {
     [DbContext(typeof(CashFlowLiteDbContext))]
-    partial class CashFlowLiteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250825212601_UpdateTransactionEntity")]
+    partial class UpdateTransactionEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

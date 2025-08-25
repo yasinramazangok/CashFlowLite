@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace CashFlowLite.Application.DTOs
 {
-    public class AccountDto
+    public class AuthResponseDto
     {
-        public int Id { get; set; }
-        public int UserId { get; set; }
-        public decimal Balance { get; set; }
+        public string Token { get; set; } = string.Empty;
     }
 }

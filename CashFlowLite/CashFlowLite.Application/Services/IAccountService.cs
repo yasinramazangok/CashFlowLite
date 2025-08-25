@@ -9,8 +9,9 @@ namespace CashFlowLite.Application.Services
 {
     public interface IAccountService
     {
-        Task<AccountDto> GetAccountAsync(int userId);
+        Task<AccountDto> GetAccountByUserIdAsync(int userId);
         Task<bool> DepositAsync(int accountId, decimal amount);
         Task<bool> WithdrawAsync(int accountId, decimal amount);
+        Task<int> CreateAccountAsync(int userId);
     }
 }

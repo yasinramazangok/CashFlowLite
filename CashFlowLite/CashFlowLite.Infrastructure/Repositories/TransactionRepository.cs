@@ -22,8 +22,10 @@ namespace CashFlowLite.Infrastructure.Repositories
         public async Task<Transaction> GetByIdAsync(int id) =>
             await _context.Transactions.FirstOrDefaultAsync(t => t.Id == id);
 
-        public async Task<IEnumerable<Transaction>> GetByAccountIdAsync(int accountId) =>
-            await _context.Transactions.Where(t => t.AccountId == accountId).ToListAsync();
+        public async Task<IEnumerable<Transaction>> GetTransactionsByAccountIdAsync(int accountId) =>
+            await _context.Transactions
+                          .Where(t => t.AccountId == accountId)
+                          .ToListAsync();
 
         public async Task AddAsync(Transaction transaction)
         {

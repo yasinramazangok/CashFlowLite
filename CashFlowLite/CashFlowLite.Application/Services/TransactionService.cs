@@ -1,5 +1,7 @@
 ﻿using CashFlowLite.Application.DTOs;
 using CashFlowLite.Application.Repositories;
+using CashFlowLite.Domain.Entities;
+using CashFlowLite.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +19,28 @@ namespace CashFlowLite.Application.Services
             _transactionRepository = transactionRepository;
         }
 
-        public async Task<IEnumerable<TransactionDto>> GetTransactionsByAccountAsync(int accountId)
+        public async Task<Transaction> LogTransactionAsync(int accountId, decimal amount, TransactionType type)
         {
-            var transactions = await _transactionRepository.GetByAccountIdAsync(accountId);
+            var transaction = new Transaction
+            {
+                AccountId = accountId,
+                Amount = amount,
+                Type = type,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _transactionRepository.AddAsync(transaction);
+            return transaction;
+        }
+
+        public async Task<IEnumerable<TransactionDto>> GetTransactionsByAccountIdAsync(int accountId)
+        {
+            var transactions = await _transactionRepository.GetTransactionsByAccountIdAsync(accountId);
+
             return transactions.Select(t => new TransactionDto
             {
                 Id = t.Id,
+                AccountId = t.AccountId,
                 Amount = t.Amount,
                 Type = t.Type,
                 CreatedAt = t.CreatedAt
