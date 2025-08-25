@@ -1,4 +1,10 @@
 
+using CashFlowLite.Application.Repositories;
+using CashFlowLite.Infrastructure.Contexts;
+using CashFlowLite.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System;
+
 namespace CashFlowLite.API
 {
     public class Program
@@ -8,6 +14,12 @@ namespace CashFlowLite.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+            builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddDbContext<CashFlowLiteDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
