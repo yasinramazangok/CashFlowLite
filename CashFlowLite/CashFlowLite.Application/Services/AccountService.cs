@@ -1,4 +1,5 @@
 ﻿using CashFlowLite.Application.DTOs;
+using CashFlowLite.Application.Interfaces;
 using CashFlowLite.Application.Repositories;
 using CashFlowLite.Domain.Entities;
 using CashFlowLite.Domain.Enums;
@@ -9,12 +10,12 @@ namespace CashFlowLite.Application.Services
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepository;
-        private readonly ITransactionService _transactionService;
+        private readonly IEventDispatcher _eventDispatcher;
 
-        public AccountService(IAccountRepository accountRepository, ITransactionService transactionService)
+        public AccountService(IAccountRepository accountRepository, IEventDispatcher eventDispatcher)
         {
             _accountRepository = accountRepository;
-            _transactionService = transactionService;
+            _eventDispatcher = eventDispatcher;
         }
 
         public async Task<AccountDto> GetAccountByUserIdAsync(int userId)
@@ -35,11 +36,15 @@ namespace CashFlowLite.Application.Services
         {
             var account = await _accountRepository.GetByIdAsync(accountId);
             if (account == null) return false;
-            account.Balance += amount;
+            account.Deposit(amount);
             await _accountRepository.UpdateAsync(account);
 
-            // Service-to-Service call → Transaction log
-            await _transactionService.LogTransactionAsync(accountId, amount, TransactionType.Deposit);
+            // Domain Event propagation
+            foreach (var domainEvent in account.DomainEvents)
+            {
+                await _eventDispatcher.Dispatch(domainEvent);
+            }
+            account.ClearEvents();
 
             return true;
         }
@@ -48,24 +53,28 @@ namespace CashFlowLite.Application.Services
         {
             var account = await _accountRepository.GetByIdAsync(accountId);
             if (account == null || account.Balance < amount || account.Balance < 0) return false;
-            account.Balance -= amount;
+            account.Withdraw(amount);
             await _accountRepository.UpdateAsync(account);
 
-            // Service-to-Service call → Transaction log
-            await _transactionService.LogTransactionAsync(accountId, amount, TransactionType.Withdraw);
+            // Domain Event propagation
+            foreach (var domainEvent in account.DomainEvents)
+            {
+                await _eventDispatcher.Dispatch(domainEvent);
+            }
+            account.ClearEvents();
 
             return true;
         }
 
         public async Task<int> CreateAccountAsync(int userId)
         {
-            var account = new Account 
-            { 
-                UserId = userId, 
-                Balance = 0, 
-                CreatedAt = DateTime.UtcNow 
+            var account = new Account
+            {
+                UserId = userId,
+                Balance = 0,
+                CreatedAt = DateTime.UtcNow
             };
-            
+
             await _accountRepository.AddAsync(account);
             return account.Id;
         }

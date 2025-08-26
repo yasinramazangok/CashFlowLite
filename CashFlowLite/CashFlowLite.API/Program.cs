@@ -1,6 +1,10 @@
 
+using CashFlowLite.Application.Concretes;
+using CashFlowLite.Application.Interfaces;
 using CashFlowLite.Application.Repositories;
 using CashFlowLite.Application.Services;
+using CashFlowLite.Domain.Concretes;
+using CashFlowLite.Infrastructure.Concretes;
 using CashFlowLite.Infrastructure.Contexts;
 using CashFlowLite.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +30,11 @@ namespace CashFlowLite.API
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ITransactionService, TransactionService>();
             builder.Services.AddScoped<IOnboardingService, OnboardingService>();
+
+            builder.Services.AddScoped<IEventDispatcher, EventDispatcher>();
+            builder.Services.AddScoped<IEventHandler<DepositMadeEvent>, DepositTransactionHandler>();
+            builder.Services.AddScoped<IEventHandler<WithdrawMadeEvent>, WithdrawTransactionHandler>();
+
 
 
             builder.Services.AddControllers();

@@ -11,7 +11,10 @@ namespace CashFlowLite.Application.Services
 {
     public interface ITransactionService
     {
-        Task<Transaction> LogTransactionAsync(int accountId, decimal amount, TransactionType type);
+        Task<TransactionDto> GetByIdAsync(int id);
+
         Task<IEnumerable<TransactionDto>> GetTransactionsByAccountIdAsync(int accountId);
+
+        Task<Transaction> LogTransactionAsync(int accountId, decimal amount, TransactionType type);
     }
 }

@@ -13,6 +13,5 @@ namespace CashFlowLite.Application.Repositories
         Task<Transaction> GetByIdAsync(int id);
         Task<IEnumerable<Transaction>> GetTransactionsByAccountIdAsync(int accountId);
         Task AddAsync(Transaction transaction);
-        Task DeleteAsync(int id);
     }
 }
