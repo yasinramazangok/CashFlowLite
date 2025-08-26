@@ -19,6 +19,7 @@ namespace CashFlowLite.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -55,7 +56,7 @@ namespace CashFlowLite.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AccountId = table.Column<int>(type: "int", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CashFlowLite.Infrastructure.Migrations
 {
     [DbContext(typeof(CashFlowLiteDbContext))]
-    [Migration("20250825111620_InitialCreate")]
+    [Migration("20250826141815_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -66,9 +66,8 @@ namespace CashFlowLite.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -95,6 +94,10 @@ namespace CashFlowLite.Infrastructure.Migrations
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.HasKey("Id");
 
